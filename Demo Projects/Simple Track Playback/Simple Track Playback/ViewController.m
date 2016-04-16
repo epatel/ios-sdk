@@ -18,7 +18,11 @@
 #import "ViewController.h"
 #import <Spotify/SPTDiskCache.h>
 
-@interface ViewController () <SPTAudioStreamingDelegate>
+// RING0
+#import "GCDAsyncSocket.h" // for TCP
+#import "echo-config.h"
+
+@interface ViewController () <SPTAudioStreamingDelegate, GCDAsyncSocketDelegate>
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *albumLabel;
@@ -31,14 +35,104 @@
 
 @end
 
-@implementation ViewController
+@implementation ViewController {
+    // RING0
+    NSInteger pingIndex;
+    NSInteger connectTries;
+    GCDAsyncSocket *socket;
+}
 
 -(void)viewDidLoad {
     [super viewDidLoad];
     self.titleLabel.text = @"Nothing Playing";
     self.albumLabel.text = @"";
     self.artistLabel.text = @"";
+    pingIndex = 0;
+    connectTries = 0;
+    [self connectEchoChamber];
 }
+
+#pragma mark - RING0
+
+- (void)connectEchoChamber
+{
+    [socket disconnect];
+    socket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue() socketQueue:dispatch_get_main_queue()];
+    [socket connectToHost:ECHO_HOST onPort:ECHO_PORT error:nil];
+    connectTries++;
+}
+
+- (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port
+{
+    NSLog(@"%s", __FUNCTION__);
+    connectTries = 0;
+    [sock performBlock:^{
+        [sock enableBackgroundingOnSocket];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *response = [NSString stringWithFormat:@"%@\n%@\n", ECHO_KEY, ECHO_CHANNEL];
+            [sock writeData:[response dataUsingEncoding:NSUTF8StringEncoding] withTimeout:5 tag:0];
+            [sock readDataToData:[GCDAsyncSocket LFData] withTimeout:-1 tag:0];
+        });
+    }];
+}
+
+- (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag
+{
+    NSLog(@"%s", __FUNCTION__);
+}
+
+- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
+{
+    [sock performBlock:^{
+        NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        str = [str stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        if ([str isEqualToString:@"left"]) {
+            [self.player skipPrevious:nil];
+            NSLog(@"%d:%d", self.player.currentTrackIndex, self.player.trackListSize);
+        } else if ([str isEqualToString:@"right"]) {
+            [self.player skipNext:nil];
+            NSLog(@"%d:%d", self.player.currentTrackIndex, self.player.trackListSize);
+        } else if ([str isEqualToString:@"uptap"]) {
+            [self.player setVolume:MIN(1.0, self.player.volume+0.1) callback:nil];
+        } else if ([str isEqualToString:@"downtap"]) {
+            [self.player setVolume:MAX(0.1, self.player.volume-0.1) callback:nil];
+        } else if ([str isEqualToString:@"clockwise"]) {
+            CGFloat len = self.player.currentTrackDuration / 4.0;
+            [self.player seekToOffset:MIN(self.player.currentPlaybackPosition + len, self.player.currentTrackDuration) callback:nil];
+        } else if ([str isEqualToString:@"counterclockwise"]) {
+            CGFloat len = self.player.currentTrackDuration / 4.0;
+            [self.player seekToOffset:MAX(self.player.currentPlaybackPosition - len, 0) callback:nil];
+        } else if ([str isEqualToString:@"up"]) {
+            // Up gesture
+        } else if ([str isEqualToString:@"down"]) {
+            [self.player setIsPlaying:!self.player.isPlaying callback:nil];
+        } else {
+            NSLog(@"Unknown: %@", str);
+        }
+        
+        [sock readDataToData:[GCDAsyncSocket LFData] withTimeout:-1 tag:0];
+    }];
+}
+
+- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err
+{
+    static BOOL doingIt = NO;
+    if (self.player.isPlaying && !doingIt && connectTries < 10) {
+        doingIt = YES;
+        [self connectEchoChamber];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            doingIt = NO;
+        });
+    }
+    NSLog(@"%s", __FUNCTION__);
+}
+
+- (void)socketDidCloseReadStream:(GCDAsyncSocket *)sock
+{
+    NSLog(@"%s", __FUNCTION__);
+}
+
+#pragma mark -
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
@@ -166,6 +260,8 @@
         self.player = [[SPTAudioStreamingController alloc] initWithClientId:auth.clientID];
         self.player.playbackDelegate = self;
         self.player.diskCache = [[SPTDiskCache alloc] initWithCapacity:1024 * 1024 * 64];
+        self.player.shuffle = YES;
+        [self.player setVolume:0.5 callback:nil];
     }
 
     [self.player loginWithSession:auth.session callback:^(NSError *error) {
@@ -177,7 +273,7 @@
 
         [self updateUI];
         
-        NSURLRequest *playlistReq = [SPTPlaylistSnapshot createRequestForPlaylistWithURI:[NSURL URLWithString:@"spotify:user:cariboutheband:playlist:4Dg0J0ICj9kKTGDyFu0Cv4"]
+        NSURLRequest *playlistReq = [SPTPlaylistSnapshot createRequestForPlaylistWithURI:[NSURL URLWithString:@"spotify:user:epatel:playlist:2X5LMJg2KCgP5d6Ihc8Avm"]
                                                                              accessToken:auth.session.accessToken
                                                                                    error:nil];
         
