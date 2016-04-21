@@ -305,6 +305,23 @@
     NSLog(@"failed to play track: %@", trackUri);
 }
 
+- (void)pingRing
+{
+    if (self.player.isPlaying) {
+        NSInteger _pingIndex = pingIndex;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (_pingIndex == self->pingIndex) {
+                [socket writeData:[@"ping\n" dataUsingEncoding:NSUTF8StringEncoding] withTimeout:5 tag:0];
+                [self pingRing];
+            } else {
+                NSLog(@"stop keep alive (index)");
+            }
+        });
+    } else {
+        NSLog(@"stop keep alive (playing)");
+    }
+}
+
 - (void) audioStreaming:(SPTAudioStreamingController *)audioStreaming didChangeToTrack:(NSDictionary *)trackMetadata {
     NSLog(@"track changed = %@", [trackMetadata valueForKey:SPTAudioStreamingMetadataTrackURI]);
     [self updateUI];
@@ -312,6 +329,14 @@
 
 - (void)audioStreaming:(SPTAudioStreamingController *)audioStreaming didChangePlaybackStatus:(BOOL)isPlaying {
     NSLog(@"is playing = %d", isPlaying);
+    if (isPlaying) {
+        [self connectEchoChamber];
+        pingIndex++;
+        [self pingRing];
+    } else {
+        [socket disconnect];
+        socket = nil;
+    }
 }
 
 @end
