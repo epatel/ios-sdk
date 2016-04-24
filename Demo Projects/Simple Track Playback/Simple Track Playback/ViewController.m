@@ -35,12 +35,151 @@
 
 @end
 
+enum {
+    ITEM_PREVIOUS = 10001,
+    ITEM_NEXT,
+    ITEM_PLAYPAUSE,
+    ITEM_ADD
+};
+
 @implementation ViewController {
     // RING0
     NSInteger pingIndex;
     NSInteger connectTries;
     GCDAsyncSocket *socket;
+    BOOL playingDiscover;
 }
+
+
+- (void)setImageForButton:(UIButton*)view
+{
+    UIImage *image;
+    
+    CGRect rect = CGRectZero;
+    rect.size = view.bounds.size;
+    UIGraphicsBeginImageContext(rect.size);
+    [[UIColor greenColor] set];
+    
+    switch (view.tag) {
+        case ITEM_PLAYPAUSE: {
+            if (self.player.isPlaying) {
+                CGFloat height = rect.size.height;
+                CGFloat startPosX = rect.size.width/2.0 - height/2.0;
+                CGFloat startPosY = height;
+                CGPoint pt = CGPointMake(startPosX, startPosY);
+                UIBezierPath *path = [UIBezierPath bezierPath];
+                [path moveToPoint:pt];
+                pt.x += height/2.5;
+                [path addLineToPoint:pt];
+                pt.y -= height;
+                [path addLineToPoint:pt];
+                pt.x -= height/2.5;
+                [path addLineToPoint:pt];
+                [path closePath];
+                pt.x += height;
+                pt.y = height;
+                [path moveToPoint:pt];
+                pt.x -= height/2.5;
+                [path addLineToPoint:pt];
+                pt.y -= height;
+                [path addLineToPoint:pt];
+                pt.x += height/2.5;
+                [path addLineToPoint:pt];
+                [path closePath];
+                [path fill];
+            } else {
+                CGFloat height = rect.size.height;
+                CGFloat startPosX = rect.size.width/2.0 - height/2.0;
+                CGFloat startPosY = height;
+                CGPoint pt = CGPointMake(startPosX, startPosY);
+                UIBezierPath *path = [UIBezierPath bezierPath];
+                [path moveToPoint:pt];
+                pt.x += height;
+                pt.y -= height/2.0;
+                [path addLineToPoint:pt];
+                pt.x -= height;
+                pt.y -= height/2.0;
+                [path addLineToPoint:pt];
+                [path closePath];
+                [path fill];
+            }
+            break;
+        }
+
+        case ITEM_PREVIOUS: {
+            CGFloat height = rect.size.width/2.0;
+            CGFloat startPosX = rect.size.width/2.0 + height;
+            CGFloat startPosY = height + (rect.size.height - height)/2.0;
+            CGPoint pt = CGPointMake(startPosX, startPosY);
+            UIBezierPath *path = [UIBezierPath bezierPath];
+            [path moveToPoint:pt];
+            pt.x -= height;
+            pt.y -= height/2.0;
+            [path addLineToPoint:pt];
+            pt.x += height;
+            pt.y -= height/2.0;
+            [path addLineToPoint:pt];
+            [path closePath];
+            pt.x -= height;
+            pt.y += height;
+            [path moveToPoint:pt];
+            pt.x -= height;
+            pt.y -= height/2.0;
+            [path addLineToPoint:pt];
+            pt.x += height;
+            pt.y -= height/2.0;
+            [path addLineToPoint:pt];
+            [path closePath];
+            [path fill];
+            break;
+        }
+
+        case ITEM_NEXT: {
+            CGFloat height = rect.size.width/2.0;
+            CGFloat startPosX = rect.size.width/2.0 - height;
+            CGFloat startPosY = height + (rect.size.height - height)/2.0;
+            CGPoint pt = CGPointMake(startPosX, startPosY);
+            UIBezierPath *path = [UIBezierPath bezierPath];
+            [path moveToPoint:pt];
+            pt.x += height;
+            pt.y -= height/2.0;
+            [path addLineToPoint:pt];
+            pt.x -= height;
+            pt.y -= height/2.0;
+            [path addLineToPoint:pt];
+            [path closePath];
+            pt.x += height;
+            pt.y += height;
+            [path moveToPoint:pt];
+            pt.x += height;
+            pt.y -= height/2.0;
+            [path addLineToPoint:pt];
+            pt.x -= height;
+            pt.y -= height/2.0;
+            [path addLineToPoint:pt];
+            [path closePath];
+            [path fill];
+            break;
+        }
+
+        case ITEM_ADD: {
+            CGFloat height = rect.size.height;
+            CGFloat startPosX = rect.size.width/2.0 - height/10.0;
+            [[UIBezierPath bezierPathWithRect:CGRectMake(startPosX, 0, height/5.0, height)] fill];
+            [[UIBezierPath bezierPathWithRect:CGRectMake(rect.size.width/2.0-height/2.0, 4.0*height/10.0, height, height/5.0)] fill];
+            break;
+        }
+
+        default:
+            break;
+    }
+    
+    image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    [view setImage:image forState:UIControlStateNormal];
+}
+
 
 -(void)viewDidLoad {
     [super viewDidLoad];
@@ -50,6 +189,11 @@
     pingIndex = 0;
     connectTries = 0;
     [self connectEchoChamber];
+    for (UIView *view in self.view.subviews) {
+        if ([view isKindOfClass:[UIButton class]] && view.tag != 0) {
+            [self setImageForButton:(UIButton*)view];
+        }
+    }
 }
 
 #pragma mark - RING0
@@ -60,6 +204,22 @@
     socket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue() socketQueue:dispatch_get_main_queue()];
     [socket connectToHost:ECHO_HOST onPort:ECHO_PORT error:nil];
     connectTries++;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"currentPlaybackPosition"]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _progressIndicator.value = self.player.currentPlaybackPosition / self.player.currentTrackDuration;
+            [_progressIndicator setNeedsDisplay];
+        });
+    }
+    if ([keyPath isEqualToString:@"volume"]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _volumeIndicator.value = self.player.volume;
+            [_volumeIndicator setNeedsDisplay];
+        });
+    }
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port
@@ -103,7 +263,11 @@
             CGFloat len = self.player.currentTrackDuration / 4.0;
             [self.player seekToOffset:MAX(self.player.currentPlaybackPosition - len, 0) callback:nil];
         } else if ([str isEqualToString:@"up"]) {
-            // Up gesture
+            if (playingDiscover) {
+                [self playfromNewStuff];
+            } else {
+                [self playfromDiscover];
+            }
         } else if ([str isEqualToString:@"down"]) {
             [self.player setIsPlaying:!self.player.isPlaying callback:nil];
         } else {
@@ -138,6 +302,16 @@
     return YES;
 }
 
+- (void)didBecomeActive
+{
+    NSLog(@"%s", __FUNCTION__);
+}
+
+- (void)willResignActive
+{
+    NSLog(@"%s", __FUNCTION__);
+}
+
 #pragma mark - Actions
 
 -(IBAction)rewind:(id)sender {
@@ -162,6 +336,35 @@
     } else {
         [self.navigationController popViewControllerAnimated:YES];
     }
+}
+
+- (IBAction)addClicked:(id)sender
+{
+    NSLog(@"%s", __FUNCTION__);
+    SPTAuth *auth = [SPTAuth defaultInstance];
+#if 0
+    NSURLRequest *request = [SPTPlaylistSnapshot createRequestForAddingTracks:@[self.player.currentTrackURI] toPlaylist:[NSURL URLWithString:@"spotify:user:epatel:playlist:2X5LMJg2KCgP5d6Ihc8Avm"] withAccessToken:auth.session.accessToken error:nil];
+    [[SPTRequest sharedHandler] performRequest:request callback:^(NSError *error, NSURLResponse *response, NSData *data) {
+        if (error != nil) {
+            NSLog(@"*** Failed to get playlist %@", error);
+            return;
+        }
+    }];
+#endif
+    [SPTTrack trackWithURI:self.player.currentTrackURI accessToken:auth.session.accessToken market:nil callback:^(NSError *error, id track) {
+        NSLog(@"%@", error);
+        NSLog(@"%@", track);
+        [SPTPlaylistSnapshot playlistWithURI:[NSURL URLWithString:@"spotify:user:epatel:playlist:2X5LMJg2KCgP5d6Ihc8Avm"]
+                                 accessToken:auth.session.accessToken
+                                    callback:^(NSError *error, SPTPlaylistSnapshot *playlist) {
+                                        NSLog(@"%@", playlist);
+                                        NSLog(@"1: %@", error);
+                                        [playlist addTracksToPlaylist:@[track] withAccessToken:auth.session.accessToken callback:^(NSError *error) {
+                                            NSLog(@"2: %@", error);
+                                            _addbutton.hidden = YES;
+                                        }];
+                                    }];
+    }];
 }
 
 #pragma mark - Logic
@@ -253,6 +456,40 @@
     [self handleNewSession];
 }
 
+- (void)playfromPlaylist:(NSURLRequest*)playlistReq
+{
+    [[SPTRequest sharedHandler] performRequest:playlistReq callback:^(NSError *error, NSURLResponse *response, NSData *data) {
+        if (error != nil) {
+            NSLog(@"*** Failed to get playlist %@", error);
+            return;
+        }
+        
+        SPTPlaylistSnapshot *playlistSnapshot = [SPTPlaylistSnapshot playlistSnapshotFromData:data withResponse:response error:nil];
+        
+        [self.player playURIs:playlistSnapshot.firstTrackPage.items fromIndex:0 callback:nil];
+    }];
+}
+
+- (void)playfromDiscover
+{
+    playingDiscover = YES;
+    SPTAuth *auth = [SPTAuth defaultInstance];
+    NSURLRequest *playlistReq = [SPTPlaylistSnapshot createRequestForPlaylistWithURI:[NSURL URLWithString:@"spotify:user:spotifydiscover:playlist:6nLjqqajZ3opLUwNa9g8TO"]
+                                                                         accessToken:auth.session.accessToken
+                                                                               error:nil];
+    [self playfromPlaylist:playlistReq];
+}
+
+- (void)playfromNewStuff
+{
+    playingDiscover = NO;
+    SPTAuth *auth = [SPTAuth defaultInstance];
+    NSURLRequest *playlistReq = [SPTPlaylistSnapshot createRequestForPlaylistWithURI:[NSURL URLWithString:@"spotify:user:epatel:playlist:2X5LMJg2KCgP5d6Ihc8Avm"]
+                                                                         accessToken:auth.session.accessToken
+                                                                               error:nil];
+    [self playfromPlaylist:playlistReq];
+}
+
 -(void)handleNewSession {
     SPTAuth *auth = [SPTAuth defaultInstance];
 
@@ -260,8 +497,10 @@
         self.player = [[SPTAudioStreamingController alloc] initWithClientId:auth.clientID];
         self.player.playbackDelegate = self;
         self.player.diskCache = [[SPTDiskCache alloc] initWithCapacity:1024 * 1024 * 64];
-        self.player.shuffle = YES;
         [self.player setVolume:0.5 callback:nil];
+        [self.player setShuffle:YES];
+        [self.player addObserver:self forKeyPath:@"currentPlaybackPosition" options:NSKeyValueObservingOptionNew context:NULL];
+        [self.player addObserver:self forKeyPath:@"volume" options:NSKeyValueObservingOptionNew context:NULL];
     }
 
     [self.player loginWithSession:auth.session callback:^(NSError *error) {
@@ -272,21 +511,8 @@
 		}
 
         [self updateUI];
-        
-        NSURLRequest *playlistReq = [SPTPlaylistSnapshot createRequestForPlaylistWithURI:[NSURL URLWithString:@"spotify:user:epatel:playlist:2X5LMJg2KCgP5d6Ihc8Avm"]
-                                                                             accessToken:auth.session.accessToken
-                                                                                   error:nil];
-        
-        [[SPTRequest sharedHandler] performRequest:playlistReq callback:^(NSError *error, NSURLResponse *response, NSData *data) {
-            if (error != nil) {
-                NSLog(@"*** Failed to get playlist %@", error);
-                return;
-            }
-            
-            SPTPlaylistSnapshot *playlistSnapshot = [SPTPlaylistSnapshot playlistSnapshotFromData:data withResponse:response error:nil];
-            
-            [self.player playURIs:playlistSnapshot.firstTrackPage.items fromIndex:0 callback:nil];
-        }];
+
+        [self playfromNewStuff];
 	}];
 }
 
@@ -322,20 +548,49 @@
     }
 }
 
-- (void) audioStreaming:(SPTAudioStreamingController *)audioStreaming didChangeToTrack:(NSDictionary *)trackMetadata {
-    NSLog(@"track changed = %@", [trackMetadata valueForKey:SPTAudioStreamingMetadataTrackURI]);
+- (void)checkAddButton:(NSString*)trackURIString
+{
+    SPTAuth *auth = [SPTAuth defaultInstance];
+    
+    [SPTPlaylistSnapshot playlistWithURI:[NSURL URLWithString:@"spotify:user:epatel:playlist:2X5LMJg2KCgP5d6Ihc8Avm"]
+                             accessToken:auth.session.accessToken
+                                callback:^(NSError *error, SPTPlaylistSnapshot *object) {
+                                    NSArray *tracks = [object.firstTrackPage tracksForPlayback];
+                                    __block BOOL found = NO;
+                                    [tracks enumerateObjectsUsingBlock:^(SPTPlaylistTrack *track, NSUInteger idx, BOOL *stop) {
+                                        if ([track.uri.absoluteString isEqualToString:trackURIString]) {
+                                            found = YES;
+                                            *stop = YES;
+                                        }
+                                    }];
+                                    _addbutton.hidden = found;
+                                }];
+}
+
+- (void)audioStreaming:(SPTAudioStreamingController *)audioStreaming didChangeToTrack:(NSDictionary *)trackMetadata {
+    NSString *trackURI = [trackMetadata valueForKey:SPTAudioStreamingMetadataTrackURI];
+    NSLog(@"track changed = %@", trackURI);
     [self updateUI];
+    [self checkAddButton:trackURI];
 }
 
 - (void)audioStreaming:(SPTAudioStreamingController *)audioStreaming didChangePlaybackStatus:(BOOL)isPlaying {
     NSLog(@"is playing = %d", isPlaying);
+    UIView *view = [self.view viewWithTag:ITEM_PLAYPAUSE];
+    if ([view isKindOfClass:[UIButton class]]) {
+        [self setImageForButton:(UIButton*)view];
+    }
     if (isPlaying) {
+        [self checkAddButton:self.player.currentTrackURI.absoluteString];
         [self connectEchoChamber];
         pingIndex++;
         [self pingRing];
+        _playbutton.titleLabel.text = @" A ";
     } else {
         [socket disconnect];
         socket = nil;
+        _addbutton.hidden = YES;
+        _playbutton.titleLabel.text = @" B ";
     }
 }
 

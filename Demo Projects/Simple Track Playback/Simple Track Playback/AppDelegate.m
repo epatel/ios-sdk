@@ -25,7 +25,7 @@
     // Set up shared authentication information
     SPTAuth *auth = [SPTAuth defaultInstance];
     auth.clientID = @kClientId;
-    auth.requestedScopes = @[SPTAuthStreamingScope];
+    auth.requestedScopes = @[SPTAuthStreamingScope, SPTAuthPlaylistModifyPublicScope, SPTAuthPlaylistModifyPrivateScope];
     auth.redirectURL = [NSURL URLWithString:@kCallbackURL];
     #ifdef kTokenSwapServiceURL
     auth.tokenSwapURL = [NSURL URLWithString:@kTokenSwapServiceURL];
@@ -63,6 +63,28 @@
     }
 
     return NO;
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+    NSLog(@"%s", __func__);
+    [_viewController willResignActive];
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+    [_viewController didBecomeActive];
+    NSLog(@"%s", __func__);
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+    NSLog(@"%s", __func__);
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
+    NSLog(@"%s", __func__);
 }
 
 @end

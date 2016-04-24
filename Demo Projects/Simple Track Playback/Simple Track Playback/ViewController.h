@@ -17,6 +17,17 @@
 #import <UIKit/UIKit.h>
 #import <Spotify/Spotify.h>
 
+#import "ProgressIndicator.h"
+#import "VolumeIndicator.h"
+
 @interface ViewController : UIViewController<SPTAudioStreamingDelegate, SPTAudioStreamingPlaybackDelegate>
+
+@property (weak, nonatomic) IBOutlet ProgressIndicator *progressIndicator;
+@property (weak, nonatomic) IBOutlet VolumeIndicator *volumeIndicator;
+@property (weak, nonatomic) IBOutlet UIButton *playbutton;
+@property (weak, nonatomic) IBOutlet UIButton *addbutton;
+
+- (void)didBecomeActive;
+- (void)willResignActive;
 
 @end

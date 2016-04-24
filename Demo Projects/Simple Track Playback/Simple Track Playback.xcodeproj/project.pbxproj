@@ -21,6 +21,10 @@
 		37E2C9EC18B4DF7D00D5D823 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37E2C9EB18B4DF7D00D5D823 /* Images.xcassets */; };
 		3A5CD93E1CC2814F00C97E67 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A5CD93B1CC2814F00C97E67 /* GCDAsyncSocket.m */; };
 		3A5CD93F1CC2814F00C97E67 /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A5CD93D1CC2814F00C97E67 /* GCDAsyncUdpSocket.m */; };
+		3ADB539B1CC99E9E00948765 /* ProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ADB539A1CC99E9E00948765 /* ProgressIndicator.m */; };
+		3ADB539E1CC99EAB00948765 /* VolumeIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ADB539D1CC99EAB00948765 /* VolumeIndicator.m */; };
+		3ADB53A11CCCBD2900948765 /* ProxyDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ADB53A01CCCBD2900948765 /* ProxyDelegate.m */; };
+		3ADB53A31CCD415300948765 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3ADB53A21CCD415300948765 /* Launch Screen.storyboard */; };
 		CE0C640C1A9B61EB00B5F6F6 /* LoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE0C640B1A9B61EB00B5F6F6 /* LoginController.m */; };
 		CE4A60C91A9CBF9600DDA394 /* backdrop.png in Resources */ = {isa = PBXBuildFile; fileRef = CE4A60C81A9CBF9600DDA394 /* backdrop.png */; };
 		DD3274FE1A26C53F00957EF7 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD3274FD1A26C53F00957EF7 /* CoreData.framework */; };
@@ -50,6 +54,13 @@
 		3A5CD93C1CC2814F00C97E67 /* GCDAsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncUdpSocket.h; path = CocoaAsyncSocket/Source/GCD/GCDAsyncUdpSocket.h; sourceTree = "<group>"; };
 		3A5CD93D1CC2814F00C97E67 /* GCDAsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GCDAsyncUdpSocket.m; path = CocoaAsyncSocket/Source/GCD/GCDAsyncUdpSocket.m; sourceTree = "<group>"; };
 		3A5CD9401CC281D600C97E67 /* echo-config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "echo-config.h"; sourceTree = "<group>"; };
+		3ADB53991CC99E9E00948765 /* ProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressIndicator.h; sourceTree = "<group>"; };
+		3ADB539A1CC99E9E00948765 /* ProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressIndicator.m; sourceTree = "<group>"; };
+		3ADB539C1CC99EAB00948765 /* VolumeIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeIndicator.h; sourceTree = "<group>"; };
+		3ADB539D1CC99EAB00948765 /* VolumeIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeIndicator.m; sourceTree = "<group>"; };
+		3ADB539F1CCCBD2900948765 /* ProxyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyDelegate.h; sourceTree = "<group>"; };
+		3ADB53A01CCCBD2900948765 /* ProxyDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProxyDelegate.m; sourceTree = "<group>"; };
+		3ADB53A21CCD415300948765 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		CE0C640A1A9B61EB00B5F6F6 /* LoginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginController.h; sourceTree = "<group>"; };
 		CE0C640B1A9B61EB00B5F6F6 /* LoginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginController.m; sourceTree = "<group>"; };
 		CE4A60C81A9CBF9600DDA394 /* backdrop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backdrop.png; sourceTree = "<group>"; };
@@ -115,9 +126,16 @@
 				3A5CD9391CC2812800C97E67 /* CocoaAsyncSocket */,
 				CECF6ACB1A1B7EFB000A29BD /* Config.h */,
 				3A5CD9401CC281D600C97E67 /* echo-config.h */,
+				3ADB539F1CCCBD2900948765 /* ProxyDelegate.h */,
+				3ADB53A01CCCBD2900948765 /* ProxyDelegate.m */,
 				37E2C9DF18B4DF7D00D5D823 /* AppDelegate.h */,
 				37E2C9E018B4DF7D00D5D823 /* AppDelegate.m */,
+				3ADB53991CC99E9E00948765 /* ProgressIndicator.h */,
+				3ADB539A1CC99E9E00948765 /* ProgressIndicator.m */,
+				3ADB539C1CC99EAB00948765 /* VolumeIndicator.h */,
+				3ADB539D1CC99EAB00948765 /* VolumeIndicator.m */,
 				37E2C9E218B4DF7D00D5D823 /* Main_iPhone.storyboard */,
+				3ADB53A21CCD415300948765 /* Launch Screen.storyboard */,
 				37E2C9E818B4DF7D00D5D823 /* ViewController.h */,
 				37E2C9E918B4DF7D00D5D823 /* ViewController.m */,
 				CE0C640A1A9B61EB00B5F6F6 /* LoginController.h */,
@@ -206,6 +224,7 @@
 				37E2C9EC18B4DF7D00D5D823 /* Images.xcassets in Resources */,
 				CE4A60C91A9CBF9600DDA394 /* backdrop.png in Resources */,
 				37E2C9E418B4DF7D00D5D823 /* Main_iPhone.storyboard in Resources */,
+				3ADB53A31CCD415300948765 /* Launch Screen.storyboard in Resources */,
 				37E2C9DB18B4DF7D00D5D823 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -218,8 +237,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				37E2C9EA18B4DF7D00D5D823 /* ViewController.m in Sources */,
+				3ADB539E1CC99EAB00948765 /* VolumeIndicator.m in Sources */,
 				3A5CD93E1CC2814F00C97E67 /* GCDAsyncSocket.m in Sources */,
+				3ADB539B1CC99E9E00948765 /* ProgressIndicator.m in Sources */,
 				CE0C640C1A9B61EB00B5F6F6 /* LoginController.m in Sources */,
+				3ADB53A11CCCBD2900948765 /* ProxyDelegate.m in Sources */,
 				37E2C9E118B4DF7D00D5D823 /* AppDelegate.m in Sources */,
 				3A5CD93F1CC2814F00C97E67 /* GCDAsyncUdpSocket.m in Sources */,
 				37E2C9DD18B4DF7D00D5D823 /* main.m in Sources */,
