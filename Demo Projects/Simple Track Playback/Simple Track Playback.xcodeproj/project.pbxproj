@@ -24,9 +24,8 @@
 		3ADB539B1CC99E9E00948765 /* ProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ADB539A1CC99E9E00948765 /* ProgressIndicator.m */; };
 		3ADB539E1CC99EAB00948765 /* VolumeIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ADB539D1CC99EAB00948765 /* VolumeIndicator.m */; };
 		3ADB53A11CCCBD2900948765 /* ProxyDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ADB53A01CCCBD2900948765 /* ProxyDelegate.m */; };
-		3ADB53A31CCD415300948765 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3ADB53A21CCD415300948765 /* Launch Screen.storyboard */; };
+		3ADB53A31CCD415300948765 /* Launch_Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3ADB53A21CCD415300948765 /* Launch_Screen.storyboard */; };
 		CE0C640C1A9B61EB00B5F6F6 /* LoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE0C640B1A9B61EB00B5F6F6 /* LoginController.m */; };
-		CE4A60C91A9CBF9600DDA394 /* backdrop.png in Resources */ = {isa = PBXBuildFile; fileRef = CE4A60C81A9CBF9600DDA394 /* backdrop.png */; };
 		DD3274FE1A26C53F00957EF7 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD3274FD1A26C53F00957EF7 /* CoreData.framework */; };
 		DD76375C1A2039CF00AE0BDC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD76375A1A2007F100AE0BDC /* libsqlite3.dylib */; };
 /* End PBXBuildFile section */
@@ -60,10 +59,9 @@
 		3ADB539D1CC99EAB00948765 /* VolumeIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeIndicator.m; sourceTree = "<group>"; };
 		3ADB539F1CCCBD2900948765 /* ProxyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyDelegate.h; sourceTree = "<group>"; };
 		3ADB53A01CCCBD2900948765 /* ProxyDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProxyDelegate.m; sourceTree = "<group>"; };
-		3ADB53A21CCD415300948765 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		3ADB53A21CCD415300948765 /* Launch_Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Launch_Screen.storyboard; sourceTree = "<group>"; };
 		CE0C640A1A9B61EB00B5F6F6 /* LoginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginController.h; sourceTree = "<group>"; };
 		CE0C640B1A9B61EB00B5F6F6 /* LoginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginController.m; sourceTree = "<group>"; };
-		CE4A60C81A9CBF9600DDA394 /* backdrop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backdrop.png; sourceTree = "<group>"; };
 		CECF6ACB1A1B7EFB000A29BD /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 		DD3274FD1A26C53F00957EF7 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		DD76375A1A2007F100AE0BDC /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
@@ -135,7 +133,7 @@
 				3ADB539C1CC99EAB00948765 /* VolumeIndicator.h */,
 				3ADB539D1CC99EAB00948765 /* VolumeIndicator.m */,
 				37E2C9E218B4DF7D00D5D823 /* Main_iPhone.storyboard */,
-				3ADB53A21CCD415300948765 /* Launch Screen.storyboard */,
+				3ADB53A21CCD415300948765 /* Launch_Screen.storyboard */,
 				37E2C9E818B4DF7D00D5D823 /* ViewController.h */,
 				37E2C9E918B4DF7D00D5D823 /* ViewController.m */,
 				CE0C640A1A9B61EB00B5F6F6 /* LoginController.h */,
@@ -149,7 +147,6 @@
 		37E2C9D718B4DF7D00D5D823 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				CE4A60C81A9CBF9600DDA394 /* backdrop.png */,
 				37E2C9D818B4DF7D00D5D823 /* Simple Track Playback-Info.plist */,
 				37E2C9D918B4DF7D00D5D823 /* InfoPlist.strings */,
 				37E2C9DC18B4DF7D00D5D823 /* main.m */,
@@ -195,7 +192,7 @@
 		37E2C9C518B4DF7D00D5D823 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Your Company";
 			};
 			buildConfigurationList = 37E2C9C818B4DF7D00D5D823 /* Build configuration list for PBXProject "Simple Track Playback" */;
@@ -222,9 +219,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				37E2C9EC18B4DF7D00D5D823 /* Images.xcassets in Resources */,
-				CE4A60C91A9CBF9600DDA394 /* backdrop.png in Resources */,
 				37E2C9E418B4DF7D00D5D823 /* Main_iPhone.storyboard in Resources */,
-				3ADB53A31CCD415300948765 /* Launch Screen.storyboard in Resources */,
+				3ADB53A31CCD415300948765 /* Launch_Screen.storyboard in Resources */,
 				37E2C9DB18B4DF7D00D5D823 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -348,7 +344,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = ../..;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Simple Track Playback/Simple Track Playback-Prefix.pch";
